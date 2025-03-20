@@ -102,7 +102,10 @@ const addUser = (user) => {
     .then((result) => {
       return result.rows;
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      return Promise.reject(err);
+    });
 };
 
 /// Reservations
