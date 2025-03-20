@@ -228,6 +228,7 @@ const addProperty = (property) => {
     property.thumbnail_photo_url,
     property.cover_photo_url,
     property.cost_per_night,
+    property.parking_spaces,
     property.number_of_bathrooms,
     property.number_of_bedrooms,
     property.country,
@@ -248,7 +249,7 @@ const addProperty = (property) => {
     .query(queryString, queryParams)
     .then((res) => {
       console.log(res.rows);
-      return res.rows;
+      return res.rows[0];
     })
     .catch((err) => console.log(err));
 };
