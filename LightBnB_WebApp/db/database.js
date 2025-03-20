@@ -100,7 +100,7 @@ const addUser = (user) => {
       [user.name, user.email, user.password]
     )
     .then((result) => {
-      return result.rows;
+      return result.rows[0];
     })
     .catch((err) => {
       console.log(err);
@@ -136,7 +136,6 @@ const getAllReservations = (guest_id, limit = 10) => {
       [guest_id, limit]
     )
     .then((result) => {
-      console.log(result.rows);
       return result.rows;
     })
     .catch((err) => console.log(err));
@@ -203,14 +202,9 @@ const getAllProperties = (options, limit = 10) => {
 
   // console.log(queryString, queryParams);
 
-  return pool
-    .query(queryString, queryParams)
-    .then((res) => {
-      return res.rows;
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+  return pool.query(queryString, queryParams).then((res) => {
+    return res.rows;
+  });
 };
 
 /**
@@ -227,78 +221,26 @@ const getAllProperties = (options, limit = 10) => {
 
 // getting data from lightbnb database
 const addProperty = (property) => {
-  let queryParams = [];
+  const queryParams = [
+    property.owner_id,
+    property.title,
+    property.description,
+    property.thumbnail_photo_url,
+    property.cover_photo_url,
+    property.cost_per_night,
+    property.number_of_bathrooms,
+    property.number_of_bedrooms,
+    property.country,
+    property.street,
+    property.city,
+    property.province,
+    property.post_code,
+  ];
   let queryString = `
   INSERT INTO properties (owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, parking_spaces, number_of_bathrooms, number_of_bedrooms, country, street, city, province, post_code)
-  VALUES 
+  VALUES $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+  RETURNING *;
   `;
-
-  if (property.owner_id) {
-    queryParams.push(`${property.owner_id}`);
-    queryString += ` $${queryParams.length}`;
-  }
-
-  if (property.title) {
-    queryParams.push(`${property.title}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.description) {
-    queryParams.push(`${property.description}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.thumbnail_photo_url) {
-    queryParams.push(`${property.thumbnail_photo_url}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.cover_photo_url) {
-    queryParams.push(`${property.cover_photo_url}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.cost_per_night) {
-    queryParams.push(`${property.cost_per_night}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.number_of_bathrooms) {
-    queryParams.push(`${property.number_of_bathrooms}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.number_of_bedrooms) {
-    queryParams.push(`${property.number_of_bedrooms}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.country) {
-    queryParams.push(`${property.country}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.street) {
-    queryParams.push(`${property.street}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.city) {
-    queryParams.push(`${property.city}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.province) {
-    queryParams.push(`${property.province}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  if (property.post_code) {
-    queryParams.push(`${property.post_code}`);
-    queryString += ` ,$${queryParams.length}`;
-  }
-
-  queryString += ` RETURNING *;`;
 
   console.log(queryString, queryParams);
 
